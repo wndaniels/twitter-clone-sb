@@ -27,7 +27,12 @@
             {% endif %}
 
           </div>
-          <p class="card-bio">{{followed_user.bio}}</p>
+          <p class="card-bio">
+            <b>Bio: </b>
+            {% if followed_user.bio | default("")%}
+            {{followed_user.bio}}
+            {% endif %}
+          </p>
         </div>
       </div>
     </div>

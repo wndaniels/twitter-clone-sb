@@ -27,6 +27,7 @@ class Follows(db.Model):
     )
 
 
+
 class Likes(db.Model):
     """Mapping user likes to warbles."""
 
@@ -110,6 +111,8 @@ class User(db.Model):
         secondaryjoin=(Follows.user_being_followed_id == id)
     )
 
+    
+
     likes = db.relationship(
         'Message',
         secondary="likes"
@@ -148,6 +151,7 @@ class User(db.Model):
 
         db.session.add(user)
         return user
+
 
     @classmethod
     def authenticate(cls, username, password):

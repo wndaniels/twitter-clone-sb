@@ -29,7 +29,12 @@
             {% endif %}
 
           </div>
-          <p class="card-bio">{{follower.bio}}</p>
+          <p class="card-bio">
+            <b>Bio: </b>
+            {% if follower.bio | default("")%}
+            {{follower.bio}}
+            {% endif %}
+          </p>
         </div>
       </div>
     </div>
