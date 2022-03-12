@@ -80,13 +80,13 @@ class UserModelTestCase(TestCase):
             user_id=self.uid 
         )
 
-        u = User.signup("yetanothertest", "t@email.com", "password", None)
+        user = User.signup("yetanothertest", "t@email.com", "password", None)
         uid = 888
-        u.id = uid
-        db.session.add_all([msg1, msg2, u])
+        user.id = uid
+        db.session.add_all([msg1, msg2, user])
         db.session.commit()
 
-        u.likes.append(msg1)
+        user.likes.append(msg1)
 
         db.session.commit()
 
