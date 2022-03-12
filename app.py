@@ -20,7 +20,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
-# toolbar = DebugToolbarExtension(app)
+toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 db.create_all()
@@ -234,8 +234,8 @@ def profile():
         if User.authenticate(user.username, form.password.data):
             user.username = form.username.data
             user.email = form.email.data
-            user.image_url = form.image_url.data
-            user.header_image_url = form.header_image_url.data
+            user.image_url = form.image_url.data or User.image_url.default.arg
+            user.header_image_url = form.header_image_url.data or User.header_image_url.default.arg
             user.bio = form.bio.data
             
             db.session.commit()
@@ -293,7 +293,7 @@ def messages_add():
 def messages_show(message_id):
     """Show a message."""
 
-    msg = Message.query.get(message_id)
+    msg = Message.query.get_or_404(message_id)
     return render_template('messages/show.html', message=msg)
 
 
@@ -327,7 +327,11 @@ def messages_destroy(message_id):
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    msg = Message.query.get(message_id)
+    msg = Message.query.get_or_404(message_id)
+    if msg.user_id != g.user.id:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
     db.session.delete(msg)
     db.session.commit()
 
@@ -361,6 +365,12 @@ def homepage():
 
     else:
         return render_template('home-anon.html')
+
+@app.errorhandler(404)
+def page_not_found(e):
+    """404 NOT FOUND page."""
+
+    return render_template('404.html'), 404
 
 
 ##############################################################################
